@@ -3,34 +3,61 @@ package com.imchen.j2va;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eclipsesource.v8.JavaCallback;
-import com.eclipsesource.v8.NodeJS;
-import com.eclipsesource.v8.Releasable;
 import com.eclipsesource.v8.V8;
 import com.eclipsesource.v8.V8Array;
 import com.eclipsesource.v8.V8Object;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+
+    private  static String scriptFilePath= Environment.getExternalStorageDirectory()+"/test.js";
 
     private static final String TAG="MainActivity";
     public V8 runtime;
     private Context mContext;
+
+    private TextView showPathTv;
+    private EditText showScriptContentEt;
+    private Button saveContentBtn;
+    private Button executeContentBtn;
+
+    Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0x0001:
+
+            }
+        }
+    };
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initView();//init view
         setContentView(R.layout.activity_main);
         mContext=getApplicationContext();
-        testJS();
+        Log.d(TAG, "onCreate: "+scriptFilePath);
+//        testJS();
     }
 
     public void testJS(){
@@ -110,6 +137,16 @@ public class MainActivity extends AppCompatActivity {
         return builder.toString();
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_save:
+                break;
+            case R.id.btn_exec:
+                break;
+        }
+    }
+
     class Console{
         public void log(String str){
             System.out.println("log:"+str);
@@ -129,5 +166,25 @@ public class MainActivity extends AppCompatActivity {
         runtime.executeScript("console.log('hello,world!')");
     }
 
+    public void initView(){
+        showPathTv= (TextView) findViewById(R.id.tv_script_path);
+        showScriptContentEt= (EditText) findViewById(R.id.et_script_content);
+        saveContentBtn= (Button) findViewById(R.id.btn_save);
+        executeContentBtn= (Button) findViewById(R.id.btn_exec);
+    }
+
+    public void updateView(){
+        File scriptFile=new File(scriptFilePath);
+        String info="";
+        if (!scriptFile.exists()){
+            info="script file not found , please create file in ExternalStorageDirectory!";
+        }else{
+            info="path:"+scriptFilePath;
+        }
+        Message msg=new Message();
+        msg.what=0x0001;
+        msg.obj=info;
+        mHandler.sendMessage(msg);
+    }
 
 }

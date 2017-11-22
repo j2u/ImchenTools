@@ -24,6 +24,7 @@ public class test {
     }
 
     public void execJS(){
+
         Context rhino= Context.enter();
         Scriptable scope=rhino.initSafeStandardObjects();
         rhino.setOptimizationLevel(-1);
