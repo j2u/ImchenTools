@@ -32,8 +32,8 @@ public class test {
                 "return 'hello world!'}";
         String jsCallJava="function callJ(){" +
                 "return javaMethod('immammam')}";
-        rhino.evaluateString(scope,readJS("sdcard/test.js"),"javaCallJs",1,null);
-        Function function= (Function) scope.get("sum",scope);
+        rhino.evaluateString(scope,jsCallJava,"<cmd>",1,null);
+        Function function= (Function) scope.get("callJ",scope);
         Object reuslt=function.call(rhino,scope,scope,new Object[]{});
 
         Log.d(TAG, "execJS: "+reuslt.toString());

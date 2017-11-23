@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText showScriptContentEt;
     private Button saveContentBtn;
     private Button executeContentBtn;
+
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -51,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mContext = getApplicationContext();
         initView();
         updateView();
+        JSEngine.getInstance();
+        JSEngine.javaToJS();
+        JSEngine.execJS(new File(scriptFilePath));
 //        test test=new test();
 //        test.execJS();
     }
@@ -60,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         showScriptContentEt = (EditText) findViewById(R.id.et_script_content);
         saveContentBtn = (Button) findViewById(R.id.btn_save);
         executeContentBtn = (Button) findViewById(R.id.btn_exec);
+        saveContentBtn.setOnClickListener(this);
+        executeContentBtn.setOnClickListener(this);
     }
 
     public void updateView() {
@@ -106,12 +112,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new File(parentPath).mkdirs();
             }
         }
-        String script = "var a=1" +
-                "var b=3" +
-                "function sum(){" +
-                "var c=a+b" +
-                "toast(c)" +
-                "}";
+        if (FileUtil.readFile(scriptFilePath).length()>0){
+            return;
+        }
+        String script = "importPackage(java.lang)\n" +
+                "var a=1\n" +
+                "var b=3\n" +
+                "function sum(){\n" +
+                "var c=a+b\n" +
+                "java.lang.System.out.println(c)\n" +
+                "toast(c)\n" +
+                "}\n";
         FileUtil.writeFile(scriptFilePath, script);
     }
 
@@ -128,6 +139,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()){
+            case R.id.btn_save:
+                int result=FileUtil.writeFile(scriptFilePath,showScriptContentEt.getText().toString());
+                if (result==0){
+                    toast("Save content success!");
+                }
+                break;
+            case R.id.btn_exec:
+                JSEngine.execJS(showScriptContentEt.getText().toString());
+                break;
+        }
     }
 }
