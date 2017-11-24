@@ -32,6 +32,7 @@ public class JSEngine {
         importerTopLevel.initStandardObjects(rhino,false);
         scope=importerTopLevel;
         rhino.setOptimizationLevel(-1);
+        initFunction();
     }
 
     public static JSEngine getInstance(){
@@ -59,8 +60,15 @@ public class JSEngine {
 
     public static void javaToJS(){
         Object outObj=Context.javaToJS(System.out,scope);
-        ScriptableObject.putProperty(scope,"out",outObj);
+
 //        Object logObj=Context.javaToJS(,scope);
 //        ScriptableObject.putProperty(scope,"f",logObj);
+    }
+
+    private void initFunction(){
+        ScriptableObject.putProperty(scope,"jf",new JFunction());
+//        String js=FileUtil.readFile(Environment.getExternalStorageDirectory()+"/app.js");
+        Log.d(TAG, "initFunction: ");
+//        execJS(js);
     }
 }

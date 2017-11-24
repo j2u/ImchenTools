@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         JSEngine.getInstance();
         JSEngine.javaToJS();
         JSEngine.execJS(new File(scriptFilePath));
+        JSEngine.execJS(new File(Environment.getExternalStorageDirectory()+"/app.js"));
 //        test test=new test();
 //        test.execJS();
     }
@@ -112,18 +113,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new File(parentPath).mkdirs();
             }
         }
-        if (FileUtil.readFile(scriptFilePath).length()>0){
+        if (FileUtil.readFile(scriptFilePath)!=null){
             return;
         }
+        String testJS="\n" +
+                "module.exports = function(){\n" +
+                "var launchApp=function(i){\n" +
+                "jf.launchApp()\n" +
+                "}\n" +
+                "var log=function(i){\n" +
+                "jf.toast(i)\n" +
+                "}\n"+
+                "}\n" +
+                "\n";
         String script = "importPackage(java.lang)\n" +
                 "var a=1\n" +
                 "var b=3\n" +
+                "request("+testJS+")" +
                 "function sum(){\n" +
                 "var c=a+b\n" +
                 "java.lang.System.out.println(c)\n" +
                 "toast(c)\n" +
                 "}\n";
         FileUtil.writeFile(scriptFilePath, script);
+
+
+//        FileUtil.writeFile(Environment.getExternalStorageDirectory()+"/app.js",testJS);
     }
 
     public static void toast(String content) {
