@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/ImchenTools.iml" filepath="$PROJECT_DIR$/ImchenTools.iml" />
       <module fileurl="file://$PROJECT_DIR$/anhino/anhino.iml" filepath="$PROJECT_DIR$/anhino/anhino.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/floatview/floatview.iml" filepath="$PROJECT_DIR$/floatview/floatview.iml" />
       <module fileurl="file://$PROJECT_DIR$/ftpserver/ftpserver.iml" filepath="$PROJECT_DIR$/ftpserver/ftpserver.iml" />
       <module fileurl="file://$PROJECT_DIR$/j2va/j2va.iml" filepath="$PROJECT_DIR$/j2va/j2va.iml" />
     </modules>
