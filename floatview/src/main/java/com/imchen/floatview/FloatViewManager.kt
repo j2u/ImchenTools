@@ -17,7 +17,7 @@ class FloatViewManager private constructor() {
 //    val floatViewManager = FloatViewManager
     private var showingViewSum = 0
     private var mContext: Context? = null
-    private var windowsManger: WindowManager? = null
+    var mWindowsManger: WindowManager? = null
 
     init {
         val cls = Class.forName("android.app.ActivityThread")
@@ -32,6 +32,7 @@ class FloatViewManager private constructor() {
         fun getInstance(): FloatViewManager {
             return Inner.floatViewManager
         }
+
     }
 
     private object Inner {
@@ -43,13 +44,13 @@ class FloatViewManager private constructor() {
         showingViewSum++
         val showViewStr = "showing view count:$showingViewSum"
         println(showViewStr)
-        addCoustomView(view, layoutParam)
+        addCustomView(view, layoutParam)
     }
 
     fun hideView(view: View) {
         if (view != null) {
-            windowsManger!!.removeView(view)
-        }else{
+            mWindowsManger!!.removeView(view)
+        } else {
             return
         }
         showingViewSum--
@@ -58,10 +59,10 @@ class FloatViewManager private constructor() {
         toast("remove a view from screen!")
     }
 
-    private fun addCoustomView(view: View, layoutParam: WindowManager.LayoutParams) {
-        windowsManger = mContext!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    private fun addCustomView(view: View, layoutParam: WindowManager.LayoutParams) {
+        mWindowsManger = mContext!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         if (!view.isShown) {
-            windowsManger!!.addView(view, layoutParam)
+            mWindowsManger!!.addView(view, layoutParam)
             toast("add a view to screen!")
         }
 
@@ -77,7 +78,7 @@ class FloatViewManager private constructor() {
         return mContext
     }
 
-    private fun toast(msg: String){
-        Toast.makeText(mContext,msg,Toast.LENGTH_SHORT).show()
+    private fun toast(msg: String) {
+        Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show()
     }
 }
