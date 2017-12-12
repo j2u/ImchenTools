@@ -41,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
         mContext=getApplicationContext();
         String json=getDisplayInfo().toString();
         Log.d("oncreate", "onCreate: "+json);
+        int i =-1;
+        while ((i=i+1)>=0){
+
+        }
     }
 
     public static JSONObject getDisplayInfo() {
@@ -101,6 +105,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceDisconnected(ComponentName name) {
 
+        }
+    }
+
+    class myThread extends Thread {
+        @Override
+        public void run() {
+            super.run();
         }
     }
 }

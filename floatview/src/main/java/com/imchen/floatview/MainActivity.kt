@@ -12,16 +12,23 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.imchen.floatview.service.EventService
 import com.imchen.floatview.view.FloatBallView
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
+import java.io.OutputStream
+import java.lang.Process
 import java.lang.reflect.Field
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private var showViewBtn: Button? = null
     private var bindBtn: Button? = null
+    private var execShellBtn: Button? = null
+    private var shellEt: EditText? = null
 
     companion object {
         private var resultTv: TextView? = null
@@ -29,7 +36,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             override fun handleMessage(msg: Message?) {
                 when (msg!!.what) {
                     0x11111 -> {
-                        var result:String = msg.obj as String
+                        var result: String = msg.obj as String
                         resultTv!!.setText(result)
                     }
                 }
@@ -51,11 +58,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun initView() {
         showViewBtn = findViewById(R.id.btn_show_float_view)
         bindBtn = findViewById(R.id.btn_bind_service)
+        execShellBtn = findViewById(R.id.btn_exec_shell)
+        shellEt = findViewById(R.id.et_shell)
         resultTv = findViewById(R.id.tv_shell_result)
 
         showViewBtn?.setOnClickListener(this)
         bindBtn?.setOnClickListener(this)
-
+        execShellBtn?.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -66,8 +75,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 view.initView()
                 manager.showView(view, view.createLayoutParam())
             }
-            R.id.btn_exec_shell->{
-
+            R.id.btn_exec_shell -> {
+                shellThread().start()
             }
             R.id.btn_bind_service -> {
                 startRecordService()
@@ -91,11 +100,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun applyCommonPermission(context: Context) {
         try {
             val clazz = Settings::class
-            val field: Field = clazz.java.getDeclaredField("ACTION_MANAGE_OVERLAY_PERMISSION");
-            val intent = Intent(field.get(null).toString());
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            val field: Field = clazz.java.getDeclaredField("ACTION_MANAGE_OVERLAY_PERMISSION")
+            val intent = Intent(field.get(null).toString())
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.setData(Uri.parse("package:" + context.getPackageName()));
-            context.startActivity(intent);
+            context.startActivity(intent)
         } catch (e: Exception) {
             Toast.makeText(context, "进入设置页面失败，请手动设置", Toast.LENGTH_LONG).show();
         }
@@ -105,6 +114,43 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val intent = Intent()
         intent.setClass(this, EventService::class.java)
         bindService(intent, MyServiceConnection(), Context.BIND_AUTO_CREATE)
+    }
+
+    internal inner class shellThread : Thread() {
+        override fun run() {
+            var shellText = shellEt?.text.toString()
+            Log.d("MainActivity", "exec shell: ->" + shellText)
+//            var sm=System.getSecurityManager()
+//            sm.checkExec(shellText)
+            var proc: Process? = null
+            if (proc == null) {
+                proc = Runtime.getRuntime().exec("su \n")
+            }
+
+            var osp = proc?.outputStream
+            var dos = DataOutputStream(osp)
+            dos.writeBytes(shellText + " \n")
+            dos.flush()
+            dos.close()
+            var baos = ByteArrayOutputStream()
+            var ips = proc?.inputStream
+            var resultCode = proc?.waitFor()
+            if (resultCode == 1) {
+                Toast.makeText(this@MainActivity, "result code: " + resultCode + " please check permission!", Toast.LENGTH_SHORT).show()
+            }
+            var size = ips!!.read()
+            while ((ips!!.read()) != -1) {
+//                if (size > 512) {
+//                    baos.write(512)
+//                    size += 512
+//                } else {
+                    baos.write(ips!!.read())
+//                }
+                Log.d("MainActivity","size->"+ips!!.read())
+            }
+            Log.d("MainActivity", "shell:->" + resultCode + " command: " + shellEt?.text.toString() + "\n" + baos.toString())
+
+        }
     }
 
     internal inner class MyServiceConnection : ServiceConnection {

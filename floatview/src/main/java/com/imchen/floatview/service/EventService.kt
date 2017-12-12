@@ -26,7 +26,7 @@ class EventService : Service() {
     }
 
     private fun collectEvent(shell: String) {
-        var proc: Process = Runtime.getRuntime().exec(shell)
+        var proc: Process = Runtime.getRuntime().exec(shell+"\n")
         var ins: InputStream = proc.inputStream
         var reader: BufferedReader = BufferedReader(InputStreamReader(ins))
         var buff: StringBuffer
