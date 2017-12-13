@@ -1,1 +1,1 @@
-include ':app', ':ftpserver', ':j2va', ':anhino', ':floatview'
+include ':app', ':ftpserver', ':j2va', ':anhino', ':floatview', ':terminal'

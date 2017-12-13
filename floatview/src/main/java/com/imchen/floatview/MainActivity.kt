@@ -16,10 +16,8 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.imchen.floatview.service.EventService
-import com.imchen.floatview.view.FloatBallView
-import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
-import java.io.OutputStream
+import com.imchen.floatview.ui.FloatBallView
+import java.io.*
 import java.lang.Process
 import java.lang.reflect.Field
 
@@ -30,14 +28,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var execShellBtn: Button? = null
     private var shellEt: EditText? = null
 
+
     companion object {
         private var resultTv: TextView? = null
+        private var mContext:Context? =null
         val mHandler: Handler = object : Handler() {
             override fun handleMessage(msg: Message?) {
                 when (msg!!.what) {
                     0x11111 -> {
                         var result: String = msg.obj as String
                         resultTv!!.setText(result)
+                    }
+                    0x00002 -> {
+                        Toast.makeText(mContext, "result code: " + msg.obj + " please check permission!", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -47,6 +50,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        mContext=applicationContext
         //6.x 必须这样开启权限
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             applyCommonPermission(applicationContext)
@@ -136,19 +140,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             var ips = proc?.inputStream
             var resultCode = proc?.waitFor()
             if (resultCode == 1) {
-                Toast.makeText(this@MainActivity, "result code: " + resultCode + " please check permission!", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this@MainActivity, "result code: " + resultCode + " please check permission!", Toast.LENGTH_SHORT).show
+                var msg:Message= Message()
+                msg.what=0x00002
+                msg.obj=resultCode
+                mHandler.sendMessage(msg)
             }
-            var size = ips!!.read()
-            while ((ips!!.read()) != -1) {
-//                if (size > 512) {
-//                    baos.write(512)
-//                    size += 512
-//                } else {
-                    baos.write(ips!!.read())
-//                }
-                Log.d("MainActivity","size->"+ips!!.read())
+            Log.d("MainActivity","resultcode: "+resultCode)
+            var reader:BufferedReader= BufferedReader(InputStreamReader(ips))
+            while (reader.readLine()!=null){
+                Log.d("MainActivity","line-> "+reader.readLine())
             }
-            Log.d("MainActivity", "shell:->" + resultCode + " command: " + shellEt?.text.toString() + "\n" + baos.toString())
+//            var size = ips!!.read()
+//            while ((ips!!.read()) != -1) {
+////                if (size > 512) {
+////                    baos.write(512)
+////                    size += 512
+////                } else {
+//                    baos.write(ips!!.read())
+////                }
+////                Log.d("MainActivity","size->"+baos.toString())
+//            }
+//            Log.d("MainActivity", "shell:->" + resultCode + " command: " + shellEt?.text.toString() + "\n" + baos.toString())
 
         }
     }

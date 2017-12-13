@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
             switch (msg.what){
                 case 0x1234:
                     testView.setText("fasf");
+                    Toast.makeText(mContext,"fadsf",Toast.LENGTH_SHORT).show();
                     break;
             }
         }

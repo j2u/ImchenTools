@@ -1,4 +1,4 @@
-package com.imchen.floatview.view
+package com.imchen.floatview.ui
 
 import android.content.Context
 import android.graphics.PixelFormat
@@ -42,7 +42,7 @@ class FloatBallView(context: Context?) : LinearLayout(context) {
         mLayoutParam!!.y = 1000
         mLayoutParam!!.format = PixelFormat.RGBA_8888
         mLayoutParam!!.type = WindowManager.LayoutParams.TYPE_PHONE
-        mLayoutParam!!.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+        mLayoutParam!!.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
         return mLayoutParam as WindowManager.LayoutParams
     }
 
