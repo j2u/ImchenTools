@@ -52,9 +52,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_main)
         mContext=applicationContext
         //6.x 必须这样开启权限
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            applyCommonPermission(applicationContext)
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            applyCommonPermission(applicationContext)
+//        }
         initView()
     }
 
