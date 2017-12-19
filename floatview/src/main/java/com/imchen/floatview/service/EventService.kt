@@ -13,8 +13,8 @@ import java.io.*
 class EventService : Service() {
     override fun onBind(intent: Intent?): IBinder {
 //        collectEvent("getevent")
-        Thread(Runnable { execShellSu("/data/local/tmp/test.txt") }).start()
         toDeskTop()
+        Thread(Runnable { execShellSu("/data/local/tmp/test.txt") }).start()
         return MyBinder()
     }
 
@@ -50,6 +50,8 @@ class EventService : Service() {
         var line: String? = null
         var index=0
         var sleepTime:Long=0
+
+        ops.write("chmod 777 /dev/input/*".toByteArray())
         while (buff.readLine().apply { line = this } != null) {
             index=line!!.lastIndexOf("]")
             sleepTime= (line!!.substring(1,index)).toLong()
@@ -59,6 +61,7 @@ class EventService : Service() {
             }
             Log.d("EventService", "shell ->" + line)
             ops.write(line!!.toByteArray())
+//            Log.d("EventService",proc.waitFor().toString())
         }
     }
 
